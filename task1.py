@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import pickle
 
 
 class Field:
@@ -76,6 +77,18 @@ class AddressBook(dict):
                 upcoming_birthdays.append(record)
         return upcoming_birthdays
 
+    def save_to_file(self, filename="addressbook.pkl"):
+        with open(filename, "wb") as f:
+            pickle.dump(self, f)
+
+    @classmethod
+    def load_from_file(cls, filename="addressbook.pkl"):
+        try:
+            with open(filename, "rb") as f:
+                return pickle.load(f)
+        except FileNotFoundError:
+            return cls()
+
 
 def parse_input(user_input):
     return user_input.strip().split()
@@ -92,6 +105,8 @@ def input_error(func):
 
 @input_error
 def add_contact(args, book):
+    if len(args) < 2:
+        raise ValueError("Not enough values to add contact. Usage: add <name> <phone>")
     name, phone = args[:2]
     record = book.find(name)
     message = "Contact updated."
@@ -105,6 +120,8 @@ def add_contact(args, book):
 
 @input_error
 def change_phone(args, book):
+    if len(args) < 2:
+        raise ValueError("Not enough values to change phone. Usage: change <name> <phone>")
     name, phone = args
     record = book.find(name)
     if record:
@@ -116,6 +133,8 @@ def change_phone(args, book):
 
 @input_error
 def show_phone(args, book):
+    if len(args) < 1:
+        raise ValueError("Not enough values to show phone. Usage: phone <name>")
     name = args[0]
     record = book.find(name)
     if record:
@@ -131,6 +150,8 @@ def show_all(book):
 
 @input_error
 def add_birthday(args, book):
+    if len(args) < 2:
+        raise ValueError("Not enough values to add birthday. Usage: add-birthday <name> <birthday>")
     name, birthday = args
     record = book.find(name)
     if record:
@@ -142,6 +163,8 @@ def add_birthday(args, book):
 
 @input_error
 def show_birthday(args, book):
+    if len(args) < 1:
+        raise ValueError("Not enough values to show birthday. Usage: show-birthday <name>")
     name = args[0]
     record = book.find(name)
     if record and record.birthday:
@@ -162,7 +185,7 @@ def birthdays(book):
 
 
 def main():
-    book = AddressBook()
+    book = AddressBook.load_from_file()
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
@@ -170,6 +193,7 @@ def main():
 
         if command in ["close", "exit"]:
             print("Good bye!")
+            book.save_to_file()
             break
 
         elif command == "hello":
