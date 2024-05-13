@@ -100,6 +100,7 @@ def input_error(func):
             return func(*args, **kwargs)
         except ValueError as e:
             print(e)
+            return None  # Додали повернення None при помилці
     return wrapper
 
 
@@ -189,6 +190,9 @@ def main():
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
+        if not user_input:  # Додали перевірку на пустий ввід
+            print("Please enter a command.")
+            continue
         command, *args = parse_input(user_input)
 
         if command in ["close", "exit"]:
