@@ -139,13 +139,15 @@ def show_phone(args, book):
     name = args[0]
     record = book.find(name)
     if record:
-        return f"Phone number: {', '.join(str(p) for p in record.phones)}"
+        phones = ', '.join(str(p) for p in record.phones)
+        return f"Phone number: {phones}" if phones else "No phone numbers found."
     else:
         return "Contact not found."
 
 @input_error
 def show_all(book):
-    return "\n".join(str(record) for record in book.values())
+    records_info = "\n".join(str(record) for record in book.values())
+    return records_info if records_info else "No contacts found."
 
 
 @input_error
@@ -183,7 +185,6 @@ def birthdays(book):
         return "\n".join(str(record) for record in upcoming_birthdays)
     else:
         return "No upcoming birthdays."
-
 
 def main():
     book = AddressBook.load_from_file()
