@@ -143,7 +143,6 @@ def show_phone(args, book):
     else:
         return "Contact not found."
 
-
 @input_error
 def show_all(book):
     return "\n".join(str(record) for record in book.values())
@@ -168,10 +167,11 @@ def show_birthday(args, book):
         raise ValueError("Not enough values to show birthday. Usage: show-birthday <name>")
     name = args[0]
     record = book.find(name)
-    if record and record.birthday:
-        return f"Birthday: {record.birthday}"
-    elif record:
-        return "Birthday not set."
+    if record:
+        if record.birthday:
+            return f"Birthday: {record.birthday}"
+        else:
+            return "Birthday not set."
     else:
         return "Contact not found."
 
