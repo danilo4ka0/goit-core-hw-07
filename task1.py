@@ -95,14 +95,17 @@ def parse_input(user_input):
 
 
 def input_error(func):
-    def wrapper(*args, **kwargs):
+    def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except ValueError as e:
-            print(e)
-            return None  # Додали повернення None при помилці
-    return wrapper
+            return str(e)
+        except KeyError:
+            return "Контакт не знайдено"
+        except IndexError:
+            return "Вкажіть аргумент для команди"
 
+    return inner
 
 @input_error
 def add_contact(args, book):
